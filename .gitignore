@@ -2,6 +2,3 @@
 venv
 charts/
 __pycache__/
-
-# files
-stocks.db
