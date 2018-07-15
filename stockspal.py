@@ -3,6 +3,8 @@ from mpl_finance import candlestick2_ohlc
 
 import matplotlib.pyplot as plt
 import quandl
+
+import dbquery
 import stockslib
 
 def getMva(input, length):
@@ -49,7 +51,7 @@ def isInRange2(value, low1, high1, low2, high2):
 def isInRange3(value, low1, high1, low2, high2, low3, high3):
     return (value > low1 or value > low2 or value > low3) and (value < high1 or value < high2 or value < high3)
 
-def processSymbol(symbol, data, date_from, date_to):
+def processSymbol(symbol, data):
     recent_signal = False  # if it has a signal in the last day(s)
 
     fig, ax = plt.subplots()
@@ -97,7 +99,7 @@ def processSymbol(symbol, data, date_from, date_to):
             close4 = closes[i+3]
             high4 = highs[i+3]
 
-        # check candlestick aptterns
+        # check candlestick patterns
         morning_star = False
         bearish_three_line_strike = False
         if i <= length-3:
@@ -154,14 +156,15 @@ def processSymbol(symbol, data, date_from, date_to):
 
     return recent_signal
 
-symbols = ['TESS']
-save_figure = False  # save chart figure to file
-show_figure = True  # show chart figure with utility program to inspect it
-only_recent_signal = False  # process only those that have a signal in the last day(s)
-recent_signal_length = 10  # how many days we consider a recent signal
+source = 'quandl'  # quandl OR database
+symbols = ['CSML','EUFN','HLIT','EWO','KBA','ARGT','BPMC','AMN','ZAYO','QUAD','LLL','FLT','WTS','GEM','WB','AYX','GTT','SOCL','IEX','BDXA','PFSI','MTCH','AOR','URI','TITN','HGV','UDOW','COTY','TREE','VTL','ATGE','COMM','MOAT','VWO','VNM','HII','CARG','WRK','VAC','IAC','FARO','HI','ADVM','G','SYNA','OFIX','FLOW','ANET','MBII','GTXI','EURN','WYN','MYSZ','SKX','XMX','REN','PBCT','CLDR','CHD','CW','IBKC','SOXL','PNR','LDOS','SPR','VNET','WDC','JAZZ','YY','MMS','GLOB','QAI','TDC','PCH','CASA','TER','ATRO','RGA','ENIC','TRIP','ARCH','AME','VYM','IAT','ZEUS','CBM','DFS','EBSB','FDS','LIVN','HIIQ','NOC','ARLZ','ALNY','ISCA','LII','ACM','TEL','GOLF','TTD','CARS','RNR','MCHP','LOGM','FBIO','PLXS','MZOR','RMAX','NVFY','WEN','LADR','CVTI','NPTN','CENX','CAMP','MELI','FSLR','IRDM','EVF','CALX','APPN','CRI','ICE','NATI','SEM','WLK','MTB','ITA','ST','GMED','AGIO','FOE','LMT','LSTR','ALLE','APH','NOBL','QLYS','ATNX','SSNC','COF','VXUS','SODA','ODFL','DOX','VLUE','EDIT','ZGNX','TECK','ANGI','ATOS','VRTX','RKDA','AEL','HRI','SXCP','CHAU','STX','RTN','DLB','RXN','VIAB','DISCA','MD','USA','TREX','GOOG','WAT','SB','STZ','ECHO','TGP','APEI','IFV','ESIO','IDTI','KWEB','FMS','BRK-B','GLT','ARKG','UPRO','CCXI','MCHI','EW','NXEO','AOS','GD','LITE','WSO','PATK','HBHC','CS','FHN','FTV','UBSI','FRTA','SEIC','CY','DLX','AR','ACWX','TSS','NYT','SGMO','AMAT','MBT','AOM','VAR','REMX','MYL','LYTS','PAGS','ITCI','AFG','PNFP','XLI','SCHD','CVEO','FATE','CMA','SIGI','FAST','MU','LPG','ZBRA','DFEN','XLB','WAFD','YUM','AVT','ISBC','FNB','PNC','GOOGL','XBI','ENTG','TGTX','X','LABU','MAR','ARA','FMI','SMH','PAYC','ABT','PPA','HEES','DE','PYPL','AJG','VRSK','CNAT','BAC','CPS','VIG','NWBI','LYG','FORD','TILE','SPXL','TD','FAS','KIE','BIF','PJC','VOO','MDB','NTLA','XLNX','ANDE','POL','COLL','XAR','INNT','XYL','KLIC','TMO','GLPG','HMST','VKTX','ENR','SYF','KEY','MOG-A','TWNK','VOE','CQQQ','MGNX','PFE','LYB','EMQQ','HHC','ALLY','GDOT','PB','QNST','ROP','ADI','PTLC','PKI','VIPS','ZTS','RTRX','SCHV','CIG','TXN','TSM','ON','DOV','MTZ','SBSI','ARRY','SAIA','MS','VEC','PRI','CHFC','GS','CHRW','PRAA','FISV','SOXX','NKTR','KNX','PPBI','CRL','RVNC','TSE','PGNX','ACIW','CRCM','FTCS','QUAL','AQXP','SSO','IUSV','AON','WAIR','RF','HUN','STI','VTV','OZRK','DIOD','KALU','CME','XLRN','LMAT','HBAN','HAFC','FTXO','CATB','SLF','ASHR','GLD','CNK','HTGM','UTX','HCA','MYOK','HON','SAGE','QHC','SMPL','BB','LION','PSDO','BLK','FDT','TLYS','CGEN','FEX','CLNC','FHLC','IWD','COL','RPV','NDSN','DGRW','LTBR','VYGR','COLB','KRA','WERN','MXIM','TBBK','CR','FBM','TAN','VHT','RSP','QRTEA','FFWM','PII','MKC','JPM','XLF','XLV','GSLC','AIT','ROL','USMV','PHYS','OXM','ROBO','KLAC','OSTK','BBW','TBK','DDM','DGRO','AIN','EME','MOD','CZZ','IMMR','HUBS','STT','KURA','MKSI','VFH','SBNY','BLDR','ARAY','KS','LBAI','ACOR','CMRX','AVY','SCHN','HPQ','SDY','GG','SPHQ','TMHC','BPMX','FXL','VEU','CFRX','RDVY','SEND','YNDX','IOVA','CSV','USAK','MXWL','RUSL','EZA','FAF','IYG','FIDU','RECN','CMCM','CVBF','SNN','LGND','ORI','ALV','AGFS','HIL','GBT','BLKB','CNOB','JNCE','HPE','BOTZ','RE','ALOG','VNDA','IVV','FXR','CFG','VIS','DSLV','SNDX','SAVE','VV','ZN','MCRN','DIA','DRYS','TYPE','VAW','HURN','SNSS','LOXO','WABC','GSV','NVAX','TCO','AMPH','CNA','IYT','FNCL','CENTA','LAYN','FMBI','HCKT','CEF','GBCI','XT','IYF','FOR','SSTK','EPZM','BLUE','GMO','DY','DNB','MKTX','SF','KBH','MMC','GNBC','EROS','SHLM','ACWV','ASTE','AIMT','FGEN','CHIQ','BUSE','WMS','CUBI','LTXB','OCLR','BCS','GSVC','SECO','GLYC','PRF','NVGS','HOPE','MBI','ITB','ACXM','CORI','DNLI','FNJN','FMAT','KND','MODN','IYM','SPLV','CBAY','FXZ','ITUS','FPH','CERC','REDU','GENE','SPYV','MDGL','SPHB','MHO','IVE','STC','MARK','OEF','IBND','KBWB','FXY','DXR','CALI']
+save_figure = True  # save chart figure to file
+show_figure = False  # show chart figure with utility program to inspect it
+only_recent_signal = True  # process only those that have a signal in the last day(s)
+recent_signal_length = 3  # how many days we consider a recent signal
 only_touching_mva = False  # passes only if the signal is in range of MVA value
 only_mva_bullish = False  # passes only if MVA(20) > MVA(50) > MVA(200)
-signals_check = {'bearish_three_line_strike': True, 'morning_star': False, 'one_white_soldier': False, 'bullish_engulfing': False}
+signals_check = {'bearish_three_line_strike': True, 'morning_star': True, 'one_white_soldier': True, 'bullish_engulfing': True}
 charts_folder = 'charts'
 
 # calculate from and to date
@@ -169,15 +172,22 @@ today = datetime.today()
 date_to = today.strftime('%Y-%m-%d')
 date_from = (today - timedelta(days=365)).strftime('%Y-%m-%d')
 
-processed_tickers = []
-recent_signal_tickers = []
-batched_data = stockslib.getQuandlBatchedData(symbols, date_from, date_to)
-for batch in batched_data:
-    for ticker in batch:
-        recent_signal = processSymbol(ticker, batch[ticker], date_from, date_to)
-        processed_tickers.append(ticker)
-        if recent_signal:
-            recent_signal_tickers.append(ticker)
+if source == 'quandl':
+    processed_tickers = []
+    recent_signal_tickers = []
+    batched_data = stockslib.getQuandlBatchedData(symbols, date_from, date_to)
+    for batch in batched_data:
+        for ticker in batch:
+            recent_signal = processSymbol(ticker, batch[ticker])
+            processed_tickers.append(ticker)
+            if recent_signal:
+                recent_signal_tickers.append(ticker)
 
-print('{} tickers processed: {}'.format(len(processed_tickers), processed_tickers))
-print('{} recent signal tickers: {}'.format(len(recent_signal_tickers), recent_signal_tickers))
+    print('{} tickers processed: {}'.format(len(processed_tickers), processed_tickers))
+    print('{} recent signal tickers: {}'.format(len(recent_signal_tickers), recent_signal_tickers))
+elif source == 'database':
+    tickers_data = dbquery.dbfetch(date_from, date_to, symbols)
+    for ticker in tickers_data:
+        processSymbol(ticker, tickers_data[ticker])
+else:
+    print('unknown source: {}'.format(source))
